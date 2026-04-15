@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sudoku Pro - Lahenda ja mängi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .sudoku-grid {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            gap: 2px;
+            background: #333;
+            padding: 2px;
+            border: 3px solid #333;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .cell {
+            aspect-ratio: 1;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .cell.fixed {
+            color: #667eea;
+            background: #f0f0f0;
+        }
+
+        .cell.editable {
+            color: #333;
+        }
+
+        .cell.selected {
+            background: #e3f2fd;
+            box-shadow: inset 0 0 0 3px #2196f3;
+        }
+
+        .cell.highlighted {
+            background: #fff3e0;
+        }
+
+        .cell.error {
+            color: #f44336;
+            animation: shake 0.3s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .cell:nth-child(3n) {
+            border-right: 3px solid #333;
+        }
+
+        .cell:nth-child(n+19):nth-child(-n+27),
+        .cell:nth-child(n+46):nth-child(-n+54) {
+            border-bottom: 3px solid #333;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .number-pad {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 12px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button.secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            box-shadow: 0 4px 15px rgba(240, 147, 251, 0.4);
+        }
+
+        button.success {
+            background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%);
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        button.danger {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .difficulty-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .difficulty-btn {
+            flex: 1;
+            padding: 10px;
+            background: #f0f0f0;
+            color: #333;
+            border: 2px solid transparent;
+        }
+
+        .difficulty-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #333;
+        }
+
+        .status {
+            text-align: center;
+            padding: 10px;
+            font-size: 1.2em;
+            color: #667eea;
+            font-weight: bold;
+            min-height: 50px;
+        }
+
+        .timer {
+            text-align: center;
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 10px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        @media (max-width: 500px) {
+            .container { padding: 15px; }
+            .cell { font-size: 1.2em; }
+            button { padding: 8px; font-size: 0.9em; }
+        }
+
+        .import-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+            margin-bottom: 10px;
+        }
+
+        .message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            display: none;
+            animation: slideIn 0.3s;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .message.success { border-left: 4px solid #4caf50; }
+        .message.error { border-left: 4px solid #f44336; }
+        .message.info { border-left: 4px solid #2196f3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Sudoku Pro</h1>
+        
+        <div class="timer" id="timer">00:00</div>
+        
+        <div class="sudoku-grid" id="sudokuGrid"></div>
+        
+        <div class="number-pad">
+            <button onclick="inputNumber(1)">1</button>
+            <button onclick="inputNumber(2)">2</button>
+            <button onclick="inputNumber(3)">3</button>
+            <button onclick="inputNumber(4)">4</button>
+            <button onclick="inputNumber(5)">5</button>
+            <button onclick="inputNumber(6)">6</button>
+            <button onclick="inputNumber(7)">7</button>
+            <button onclick="inputNumber(8)">8</button>
+            <button onclick="inputNumber(9)">9</button>
+            <button onclick="clearCell()" class="danger">⌫</button>
+        </div>
+        
+        <div class="controls">
+            <button onclick="checkSolution()" class="success">✓ Kontrolli</button>
+            <button onclick="solvePuzzle()" class="secondary">⚡ Lahenda</button>
+            <button onclick="getHint()" class="secondary">💡 Vihje</button>
+            <button onclick="newGame()" class="success">🔄 Uus</button>
+            <button onclick="resetGame()" class="danger">↺ Algne</button>
+        </div>
+        
+        <div class="difficulty-selector">
+            <button class="difficulty-btn active" onclick="setDifficulty('easy')">Lihtne</button>
+            <button class="difficulty-btn" onclick="setDifficulty('medium')">Keskmine</button>
+            <button class="difficulty-btn" onclick="setDifficulty('hard')">Raske</button>
+            <button class="difficulty-btn" onclick="setDifficulty('expert')">Ekspert</button>
+        </div>
+        
+        <div class="status" id="status"></div>
+        
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value" id="movesCount">0</div>
+                <div class="stat-label">Käike</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="errorsCount">0</div>
+                <div class="stat-label">Vigu</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="progressPercent">0%</div>
+                <div class="stat-label">Valmis</div>
+            </div>
+        </div>
+        
+        <div class="import-section">
+            <textarea id="puzzleInput" rows="2" placeholder="Kleebi Sudoku (81 märki, nt: 53..7....6..195....98....6.8...6...34..8.3..17...2...6.6....28....419..5....8..79)"></textarea>
+            <button onclick="importPuzzle()" style="width: 100%">📋 Impordi Sudoku</button>
+        </div>
+    </div>
+    
+    <div class="message" id="message"></div>
+
+    <script>
+        class SudokuGame {
+            constructor() {
+                this.grid = Array(9).fill(0).map(() => Array(9).fill(0));
+                this.initialGrid = Array(9).fill(0).map(() => Array(9).fill(0));
+                this.selectedCell = null;
+                this.difficulty = 'medium';
+                this.moves = 0;
+                this.errors = 0;
+                this.timerSeconds = 0;
+                this.timerInterval = null;
+                this.gameActive = false;
+                
+                this.init();
+            }
+            
+            init() {
+                this.renderGrid();
+                this.setupEventListeners();
+                this.newGame();
+            }
+            
+            setupEventListeners() {
+                document.addEventListener('keydown', (e) => {
+                    if (e.key >= '1' && e.key <= '9') {
+                        this.inputNumber(parseInt(e.key));
+                    } else if (e.key === 'Delete' || e.key === 'Backspace') {
+                        this.clearCell();
+                    } else if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || 
+                              e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                        this.handleArrowKeys(e.key);
+                    }
+                });
+            }
+            
+            handleArrowKeys(key) {
+                if (!this.selectedCell) return;
+                
+                const [row, col] = this.selectedCell;
+                let newRow = row, newCol = col;
+                
+                switch(key) {
+                    case 'ArrowUp': newRow = Math.max(0, row - 1); break;
+                    case 'ArrowDown': newRow = Math.min(8, row + 1); break;
+                    case 'ArrowLeft': newCol = Math.max(0, col - 1); break;
+                    case 'ArrowRight': newCol = Math.min(8, col + 1); break;
+                }
+                
+                this.selectCell(newRow, newCol);
+            }
+            
+            renderGrid() {
+                const gridElement = document.getElementById('sudokuGrid');
+                gridElement.innerHTML = '';
+                
+                for (let i = 0; i < 9; i++) {
+                    for (let j = 0; j < 9; j++) {
+                        const cell = document.createElement('div');
+                        cell.className = 'cell';
+                        
+                        if (this.initialGrid[i][j] !== 0) {
+                            cell.classList.add('fixed');
+                            cell.textContent = this.initialGrid[i][j];
+                        } else if (this.grid[i][j] !== 0) {
+                            cell.classList.add('editable');
+                            cell.textContent = this.grid[i][j];
+                        }
+                        
+                        cell.dataset.row = i;
+                        cell.dataset.col = j;
+                        
+                        cell.addEventListener('click', () => this.selectCell(i, j));
+                        
+                        gridElement.appendChild(cell);
+                    }
+                }
+                
+                this.updateHighlights();
+            }
+            
+            selectCell(row, col) {
+                if (this.initialGrid[row][col] !== 0) return;
+                
+                this.selectedCell = [row, col];
+                this.updateHighlights();
+            }
+            
+            updateHighlights() {
+                const cells = document.querySelectorAll('.cell');
+                cells.forEach(cell => cell.classList.remove('selected', 'highlighted'));
+                
+                if (this.selectedCell) {
+                    const [selectedRow, selectedCol] = this.selectedCell;
+                    
+                    cells.forEach(cell => {
+                        const row = parseInt(cell.dataset.row);
+                        const col = parseInt(cell.dataset.col);
+                        
+                        if (row === selectedRow && col === selectedCol) {
+                            cell.classList.add('selected');
+                        } else if (row === selectedRow || col === selectedCol || 
+                                  (Math.floor(row/3) === Math.floor(selectedRow/3) && 
+                                   Math.floor(col/3) === Math.floor(selectedCol/3))) {
+                            cell.classList.add('highlighted');
+                        }
+                    });
+                }
+            }
+            
+            inputNumber(num) {
+                if (!this.selectedCell) {
+                    this.showMessage('Vali kõigepealt lahter!', 'info');
+                    return;
+                }
+                
+                const [row, col] = this.selectedCell;
+                
+                if (this.initialGrid[row][col] !== 0) {
+                    this.showMessage('Seda lahtrit ei saa muuta!', 'error');
+                    return;
+                }
+                
+                if (this.isValidMove(row, col, num)) {
+                    this.grid[row][col] = num;
+                    this.moves++;
+                    this.updateStats();
+                    this.renderGrid();
+                    this.selectCell(row, col);
+                    
+                    if (this.isSolved()) {
+                        this.stopTimer();
+                        this.showMessage('🎉 Palju õnne! Lahendasid Sudoku!', 'success');
+                    }
+                } else {
+                    this.errors++;
+                    this.updateStats();
+                    this.showError(row, col);
+                    this.showMessage('Vigane käik!', 'error');
+                }
+            }
+            
+            clearCell() {
+                if (!this.selectedCell) return;
+                
+                const [row, col] = this.selectedCell;
+                
+                if (this.initialGrid[row][col] !== 0) {
+                    this.showMessage('Algset lahtrit ei saa tühjendada!', 'error');
+                    return;
+                }
+                
+                this.grid[row][col] = 0;
+                this.renderGrid();
+                this.selectCell(row, col);
+            }
+            
+            isValidMove(row, col, num) {
+                // Kontrolli rida
+                for (let j = 0; j < 9; j++) {
+                    if (j !== col && this.grid[row][j] === num) return false;
+                }
+                
+                // Kontrolli veerg
+                for (let i = 0; i < 9; i++) {
+                    if (i !== row && this.grid[i][col] === num) return false;
+                }
+                
+                // Kontrolli 3x3 plokk
+                const startRow = Math.floor(row / 3) * 3;
+                const startCol = Math.floor(col / 3) * 3;
+                
+                for (let i = startRow; i < startRow + 3; i++) {
+                    for (let j = startCol; j < startCol + 3; j++) {
+                        if (i !== row && j !== col && this.grid[i][j] === num) return false;
+                    }
+                }
+                
+                return true;
+            }
+            
+            showError(row, col) {
+                const cells = document.querySelectorAll('.cell');
+                cells.forEach(cell => {
+                    if (parseInt(cell.dataset.row) === row && 
+                        parseInt(cell.dataset.col) === col) {
+                        cell.classList.add('error');
+                        setTimeout(() => cell.classList.remove('error'), 300);
+                    }
+                });
+            }
+            
+            isSolved() {
+                for (let i = 0; i < 9; i++) {
+                    for (let j = 0; j < 9; j++) {
+                        if (this.grid[i][j] === 0) return false;
+                    }
+                }
+                return this.checkSolution();
+            }
+            
+            checkSolution() {
+                // Kontrolli kõiki ridu
+                for (let i = 0; i < 9; i++) {
+                    const row = new Set();
+                    for (let j = 0; j < 9; j++) {
+                        if (this.grid[i][j] === 0) return false;
+                        row.add(this.grid[i][j]);
+                    }
+                    if (row.size !== 9) return false;
+                }
+                
+                // Kontrolli kõiki veerge
+                for (let j = 0; j < 9; j++) {
+                    const col = new Set();
+                    for (let i = 0; i < 9; i++) {
+                        col.add(this.grid[i][j]);
+                    }
+                    if (col.size !== 9) return false;
+                }
+                
+                // Kontrolli 3x3 plokke
+                for (let block = 0; block < 9; block++) {
+                    const blockSet = new Set();
+                    const startRow = Math.floor(block / 3) * 3;
+                    const startCol = (block % 3) * 3;
+                    
+                    for (let i = startRow; i < startRow + 3; i++) {
+                        for (let j = startCol; j < startCol + 3; j++) {
+                            blockSet.add(this.grid[i][j]);
+                        }
+                    }
+                    if (blockSet.size !== 9) return false;
+                }
+                
+                return true;
+            }
+            
+            solvePuzzle() {
+                if (!this.solve(this.grid)) {
+                    this.showMessage('Ei leia lahendust!', 'error');
+                } else {
+                    this.renderGrid();
+                    this.showMessage('Sudoku lahendatud!', 'success');
+                }
+            }
+            
+            solve(board) {
+                const empty = this.findEmpty(board);
+                if (!empty) return true;
+                
+                const [row, col] = empty;
+                
+                for (let num = 1; num <= 9; num++) {
+                    if (this.isValidInBoard(board, row, col, num)) {
+                        board[row][col] = num;
+                        
+                        if (this.solve(board)) return true;
+                        
+                        board[row][col] = 0;
+                    }
+                }
+                
+                return false;
+            }
+            
+            findEmpty(board) {
+                for (let i = 0; i < 9; i++) {
+                    for (let j = 0; j < 9; j++) {
+                        if (board[i][j] === 0) return [i, j];
+                    }
+                }
+                return null;
+            }
+            
+            isValidInBoard(board, row, col, num) {
+                // Kontrolli rida
+                for (let j = 0; j < 9; j++) {
+                    if (board[row][j] === num) return false;
+                }
+                
+                // Kontrolli veerg
+                for (let i = 0; i < 9; i++) {
+                    if (board[i][col] === num) return false;
+                }
+                
+                // Kontrolli 3x3 plokk
+                const startRow = Math.floor(row / 3) * 3;
+                const startCol = Math.floor(col / 3) * 3;
+                
+                for (let i = startRow; i < startRow + 3; i++) {
+                    for (let j = startCol; j < startCol + 3; j++) {
+                        if (board[i][j] === num) return false;
+                    }
+                }
+                
+                return true;
+            }
+            
+            getHint() {
+                const tempBoard = this.grid.map(row => [...row]);
+                
+                if (this.solve(tempBoard)) {
+                    const empty = this.findEmpty(this.grid);
+                    if (empty) {
+                        const [row, col] = empty;
+                        const hintValue = tempBoard[row][col];
+                        this.showMessage(`Vihje: lahter (${row+1}, ${col+1}) peaks olema ${hintValue}`, 'info');
+                        this.selectCell(row, col);
+                    }
+                }
+            }
+            
+            generatePuzzle(difficulty) {
+                // Genereeri täislahendus
+                const fullBoard = Array(9).fill(0).map(() => Array(9).fill(0));
+                this.fillDiagonal(fullBoard);
+                this.solve(fullBoard);
+                
+                // Kopeeri ja eemalda lahtreid vastavalt raskusastmele
+                const puzzle = fullBoard.map(row => [...row]);
+                const cellsToRemove = {
+                    'easy': 40,
+                    'medium': 50,
+                    'hard': 60,
+                    'expert': 65
+                }[difficulty] || 50;
+                
+                let removed = 0;
+                while (removed < cellsToRemove) {
+                    const row = Math.floor(Math.random() * 9);
+                    const col = Math.floor(Math.random() * 9);
+                    
+                    if (puzzle[row][col] !== 0) {
+                        puzzle[row][col] = 0;
+                        removed++;
+                    }
+                }
+                
+                return puzzle;
+            }
+            
+            fillDiagonal(board) {
+                for (let block = 0; block < 9; block += 3) {
+                    const nums = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+                    this.shuffle(nums);
+                    
+                    let index = 0;
+                    for (let i = block; i < block + 3; i++) {
+                        for (let j = block; j < block + 3; j++) {
+                            board[i][j] = nums[index++];
+                        }
+                    }
+                }
+            }
+            
+            shuffle(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+            }
+            
+            newGame() {
+                const puzzle = this.generatePuzzle(this.difficulty);
+                this.grid = puzzle.map(row => [...row]);
+                this.initialGrid = puzzle.map(row => [...row]);
+                this.selectedCell = null;
+                this.moves = 0;
+                this.errors = 0;
+                this.renderGrid();
+                this.updateStats();
+                this.startTimer();
+                this.showMessage(`Uus ${this.getDifficultyName()} mäng!`, 'success');
+            }
+            
+            resetGame() {
+                this.grid = this.initialGrid.map(row => [...row]);
+                this.selectedCell = null;
+                this.moves = 0;
+                this.errors = 0;
+                this.renderGrid();
+                this.updateStats();
+                this.showMessage('Mäng lähtestatud', 'info');
+            }
+            
+            importPuzzle() {
+                const input = document.getElementById('puzzleInput').value;
+                const cleaned = input.replace(/[.\s\n|]/g, '');
+                
+                if (cleaned.length !== 81) {
+                    this.showMessage('Vigane formaat! Peab olema 81 märki.', 'error');
+                    return;
+                }
+                
+                const newGrid = [];
+                for (let i = 0; i < 9; i++) {
+                    const row = [];
+                    for (let j = 0; j < 9; j++) {
+                        const char = cleaned[i * 9 + j];
+                        row.push(char === '0' || char === '.' ? 0 : parseInt(char));
+                    }
+                    newGrid.push(row);
+                }
+                
+                this.grid = newGrid.map(row => [...row]);
+                this.initialGrid = newGrid.map(row => [...row]);
+                this.selectedCell = null;
+                this.moves = 0;
+                this.errors = 0;
+                this.renderGrid();
+                this.updateStats();
+                this.startTimer();
+                this.showMessage('Sudoku imporditud!', 'success');
+            }
+            
+            setDifficulty(difficulty) {
+                this.difficulty = difficulty;
+                
+                document.querySelectorAll('.difficulty-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                event.target.classList.add('active');
+            }
+            
+            getDifficultyName() {
+                const names = {
+                    'easy': 'lihtne',
+                    'medium': 'keskmine',
+                    'hard': 'raske',
+                    'expert': 'ekspert'
+                };
+                return names[this.difficulty] || this.difficulty;
+            }
+            
+            updateStats() {
+                document.getElementById('movesCount').textContent = this.moves;
+                document.getElementById('errorsCount').textContent = this.errors;
+                
+                const filled = this.grid.flat().filter(v => v !== 0).length;
+                const total = 81;
+                const percent = Math.round((filled / total) * 100);
+                document.getElementById('progressPercent').textContent = `${percent}%`;
+            }
+            
+            startTimer() {
+                if (this.timerInterval) clearInterval(this.timerInterval);
+                
+                this.timerSeconds = 0;
+                this.gameActive = true;
+                
+                this.timerInterval = setInterval(() => {
+                    if (this.gameActive) {
+                        this.timerSeconds++;
+                        const minutes = Math.floor(this.timerSeconds / 60);
+                        const seconds = this.timerSeconds % 60;
+                        document.getElementById('timer').textContent = 
+                            `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    }
+                }, 1000);
+            }
+            
+            stopTimer() {
+                this.gameActive = false;
+            }
+            
+            showMessage(text, type) {
+                const messageEl = document.getElementById('message');
+                const statusEl = document.getElementById('status');
+                
+                messageEl.textContent = text;
+                messageEl.className = `message ${type}`;
+                messageEl.style.display = 'block';
+                
+                statusEl.textContent = text;
+                
+                setTimeout(() => {
+                    messageEl.style.display = 'none';
+                }, 3000);
+            }
+        }
+        
+        // Globaalsed funktsioonid nuppude jaoks
+        let game;
+        
+        window.addEventListener('DOMContentLoaded', () => {
+            game = new SudokuGame();
+        });
+        
+        function inputNumber(num) { game.inputNumber(num); }
+        function clearCell() { game.clearCell(); }
+        function checkSolution() { 
+            if (game.checkSolution()) {
+                game.showMessage('✓ Õige! Sudoku on korrektselt lahendatud!', 'success');
+            } else {
+                game.showMessage('✗ Veel pole õige. Jätka proovimist!', 'error');
+            }
+        }
+        function solvePuzzle() { game.solvePuzzle(); }
+        function getHint() { game.getHint(); }
+        function newGame() { game.newGame(); }
+        function resetGame() { game.resetGame(); }
+        function setDifficulty(diff) { game.setDifficulty(diff); }
+        function importPuzzle() { game.importPuzzle(); }
+    </script>
+</body>
+</html>
