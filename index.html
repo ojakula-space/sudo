@@ -2,8 +2,57 @@
 <html lang="et">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sudoku Pro - Lahenda ja mängi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    
+    <!-- SEO Meta Tags -->
+    <title>Sudoku Pro | Perekond Ojaküla | Tasuta Online Sudoku Mäng</title>
+    <meta name="description" content="Mängi Sudokut online tasuta! Perekond Ojaküla poolt loodud professionaalne Sudoku mäng. 4 raskusastet, offline tugi, ilus disain. Lahenda ja naudi!">
+    <meta name="keywords" content="sudoku, sudoku mäng, tasuta sudoku, online sudoku, sudoku lahendaja, Perekond Ojaküla, eesti sudoku, sudoku eesti keeles, судоку, судоку онлайн, sudoku puzzle">
+    <meta name="author" content="Perekond Ojaküla">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <meta name="googlebot" content="index, follow">
+    <meta name="revisit-after" content="7 days">
+    <meta name="language" content="Estonian, English, Russian">
+    <meta name="distribution" content="global">
+    <meta name="rating" content="general">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://ojakula-space.github.io/sudo/">
+    <meta property="og:title" content="Sudoku Pro | Perekond Ojaküla | Tasuta Sudoku Mäng">
+    <meta property="og:description" content="Mängi Sudokut online tasuta! 4 raskusastet, offline tugi, ilus disain. Perekond Ojaküla poolt loodud.">
+    <meta property="og:image" content="https://ojakula-space.github.io/sudo/sudoku-og-image.png">
+    <meta property="og:site_name" content="Sudoku Pro by Perekond Ojaküla">
+    <meta property="og:locale" content="et_EE">
+    <meta property="og:locale:alternate" content="en_US">
+    <meta property="og:locale:alternate" content="ru_RU">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://ojakula-space.github.io/sudo/">
+    <meta property="twitter:title" content="Sudoku Pro | Perekond Ojaküla">
+    <meta property="twitter:description" content="Tasuta Sudoku mäng kogu perele!">
+    <meta property="twitter:image" content="https://ojakula-space.github.io/sudo/sudoku-og-image.png">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://ojakula-space.github.io/sudo/">
+    
+    <!-- Alternate language versions -->
+    <link rel="alternate" hreflang="et" href="https://ojakula-space.github.io/sudo/">
+    <link rel="alternate" hreflang="en" href="https://ojakula-space.github.io/sudo/en">
+    <link rel="alternate" hreflang="ru" href="https://ojakula-space.github.io/sudo/ru">
+    <link rel="alternate" hreflang="x-default" href="https://ojakula-space.github.io/sudo/">
+    
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Sudoku Pro">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='70' font-size='60' text-anchor='middle' fill='white' font-family='Arial'%3E9%3C/text%3E%3C/svg%3E">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23667eea'/%3E%3Ctext x='50' y='70' font-size='60' text-anchor='middle' fill='white' font-family='Arial'%3E9%3C/text%3E%3C/svg%3E">
+    
     <style>
         * {
             margin: 0;
@@ -12,7 +61,7 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
@@ -26,19 +75,59 @@
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             padding: 30px;
-            max-width: 600px;
+            max-width: 650px;
             width: 100%;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .language-selector {
+            display: flex;
+            gap: 8px;
+        }
+
+        .lang-btn {
+            padding: 6px 12px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .lang-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .lang-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
         }
 
         h1 {
             text-align: center;
             color: #333;
-            margin-bottom: 20px;
-            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-size: 2.2em;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 1.1em;
         }
 
         .sudoku-grid {
@@ -118,7 +207,7 @@
         }
 
         button {
-            padding: 12px;
+            padding: 12px 8px;
             font-size: 1.1em;
             border: none;
             border-radius: 10px;
@@ -141,17 +230,14 @@
 
         button.secondary {
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            box-shadow: 0 4px 15px rgba(240, 147, 251, 0.4);
         }
 
         button.success {
             background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%);
-            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
         }
 
         button.danger {
             background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
-            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
         }
 
         .difficulty-selector {
@@ -197,7 +283,7 @@
             padding: 15px;
             background: #f8f9fa;
             border-radius: 10px;
-            margin-top: 15px;
+            margin: 15px 0;
         }
 
         .stat {
@@ -215,10 +301,51 @@
             color: #666;
         }
 
-        @media (max-width: 500px) {
-            .container { padding: 15px; }
-            .cell { font-size: 1.2em; }
-            button { padding: 8px; font-size: 0.9em; }
+        .install-btn {
+            width: 100%;
+            margin-top: 10px;
+            background: linear-gradient(135deg, #34d399 0%, #059669 100%);
+            display: none;
+        }
+
+        .install-btn.show {
+            display: block;
+        }
+
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+            text-align: center;
+        }
+
+        .footer-credit {
+            font-size: 1.1em;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .footer-credit a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .footer-credit a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            font-size: 0.9em;
+            color: #999;
+        }
+
+        .footer-links a {
+            color: #667eea;
+            text-decoration: none;
         }
 
         .import-section {
@@ -247,6 +374,7 @@
             box-shadow: 0 5px 20px rgba(0,0,0,0.3);
             display: none;
             animation: slideIn 0.3s;
+            z-index: 1000;
         }
 
         @keyframes slideIn {
@@ -257,11 +385,29 @@
         .message.success { border-left: 4px solid #4caf50; }
         .message.error { border-left: 4px solid #f44336; }
         .message.info { border-left: 4px solid #2196f3; }
+
+        @media (max-width: 500px) {
+            .container { padding: 15px; }
+            .cell { font-size: 1.2em; }
+            button { padding: 8px 4px; font-size: 0.9em; }
+            h1 { font-size: 1.8em; }
+            .controls { gap: 5px; }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎮 Sudoku Pro</h1>
+        <div class="header">
+            <div></div>
+            <div class="language-selector">
+                <button class="lang-btn active" onclick="setLanguage('et')">🇪🇪 EE</button>
+                <button class="lang-btn" onclick="setLanguage('en')">🇬🇧 EN</button>
+                <button class="lang-btn" onclick="setLanguage('ru')">🇷🇺 RU</button>
+            </div>
+        </div>
+        
+        <h1 id="gameTitle">Sudoku Pro</h1>
+        <div class="subtitle" id="gameSubtitle">Lahenda, mängi, naudi!</div>
         
         <div class="timer" id="timer">00:00</div>
         
@@ -277,50 +423,287 @@
             <button onclick="inputNumber(7)">7</button>
             <button onclick="inputNumber(8)">8</button>
             <button onclick="inputNumber(9)">9</button>
-            <button onclick="clearCell()" class="danger">⌫</button>
+            <button onclick="clearCell()" class="danger" id="clearBtn">⌫</button>
         </div>
         
         <div class="controls">
-            <button onclick="checkSolution()" class="success">✓ Kontrolli</button>
-            <button onclick="solvePuzzle()" class="secondary">⚡ Lahenda</button>
-            <button onclick="getHint()" class="secondary">💡 Vihje</button>
-            <button onclick="newGame()" class="success">🔄 Uus</button>
-            <button onclick="resetGame()" class="danger">↺ Algne</button>
+            <button onclick="checkSolution()" class="success" id="checkBtn">✓ Kontrolli</button>
+            <button onclick="solvePuzzle()" class="secondary" id="solveBtn">⚡ Lahenda</button>
+            <button onclick="getHint()" class="secondary" id="hintBtn">💡 Vihje</button>
+            <button onclick="newGame()" class="success" id="newGameBtn">🔄 Uus</button>
+            <button onclick="resetGame()" class="danger" id="resetBtn">↺ Algne</button>
         </div>
         
         <div class="difficulty-selector">
-            <button class="difficulty-btn active" onclick="setDifficulty('easy')">Lihtne</button>
-            <button class="difficulty-btn" onclick="setDifficulty('medium')">Keskmine</button>
-            <button class="difficulty-btn" onclick="setDifficulty('hard')">Raske</button>
-            <button class="difficulty-btn" onclick="setDifficulty('expert')">Ekspert</button>
+            <button class="difficulty-btn active" onclick="setDifficulty('easy')" id="diffEasy">Lihtne</button>
+            <button class="difficulty-btn" onclick="setDifficulty('medium')" id="diffMedium">Keskmine</button>
+            <button class="difficulty-btn" onclick="setDifficulty('hard')" id="diffHard">Raske</button>
+            <button class="difficulty-btn" onclick="setDifficulty('expert')" id="diffExpert">Ekspert</button>
         </div>
+        
+        <button class="install-btn" id="installBtn" onclick="installApp()">
+            📱 <span id="installText">Installi rakendus</span>
+        </button>
         
         <div class="status" id="status"></div>
         
         <div class="stats">
             <div class="stat">
                 <div class="stat-value" id="movesCount">0</div>
-                <div class="stat-label">Käike</div>
+                <div class="stat-label" id="movesLabel">Käike</div>
             </div>
             <div class="stat">
                 <div class="stat-value" id="errorsCount">0</div>
-                <div class="stat-label">Vigu</div>
+                <div class="stat-label" id="errorsLabel">Vigu</div>
             </div>
             <div class="stat">
                 <div class="stat-value" id="progressPercent">0%</div>
-                <div class="stat-label">Valmis</div>
+                <div class="stat-label" id="progressLabel">Valmis</div>
             </div>
         </div>
         
         <div class="import-section">
-            <textarea id="puzzleInput" rows="2" placeholder="Kleebi Sudoku (81 märki, nt: 53..7....6..195....98....6.8...6...34..8.3..17...2...6.6....28....419..5....8..79)"></textarea>
-            <button onclick="importPuzzle()" style="width: 100%">📋 Impordi Sudoku</button>
+            <textarea id="puzzleInput" rows="2" placeholder="Kleebi Sudoku (81 märki)..."></textarea>
+            <button onclick="importPuzzle()" style="width: 100%" id="importBtn">📋 Impordi Sudoku</button>
+        </div>
+        
+        <div class="footer">
+            <div class="footer-credit">
+                🎮 <span id="footerText">Mängu teinud</span> 
+                <a href="#" onclick="showFamilyInfo()"><strong>Perekond Ojaküla</strong></a> 
+                <span id="footerYear">2024</span>
+            </div>
+            <div class="footer-links">
+                <a href="#" onclick="showOfflineInfo()" id="offlineLink">📡 Offline mäng</a>
+                <a href="#" onclick="shareGame()" id="shareLink">🔗 Jaga</a>
+                <a href="#" onclick="showInstructions()" id="instructionsLink">❓ Juhend</a>
+            </div>
         </div>
     </div>
     
     <div class="message" id="message"></div>
-
+    
+    <!-- Schema.org structured data for SEO -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Sudoku Pro",
+        "description": "Tasuta Sudoku mäng 4 raskusastmega. Mängi online või offline. Perekond Ojaküla poolt loodud.",
+        "url": "https://ojakula-space.github.io/sudo/",
+        "applicationCategory": "Game",
+        "operatingSystem": "All",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "EUR"
+        },
+        "author": {
+            "@type": "Organization",
+            "name": "Perekond Ojaküla"
+        },
+        "inLanguage": ["et", "en", "ru"],
+        "featureList": ["Offline play", "4 difficulty levels", "Hint system", "Auto-solver"]
+    }
+    </script>
+    
     <script>
+        // ===== Mitmekeelne tugi =====
+        const translations = {
+            et: {
+                title: 'Sudoku Pro',
+                subtitle: 'Lahenda, mängi, naudi!',
+                check: '✓ Kontrolli',
+                solve: '⚡ Lahenda',
+                hint: '💡 Vihje',
+                newGame: '🔄 Uus',
+                reset: '↺ Algne',
+                clear: '⌫',
+                easy: 'Lihtne',
+                medium: 'Keskmine',
+                hard: 'Raske',
+                expert: 'Ekspert',
+                moves: 'Käike',
+                errors: 'Vigu',
+                progress: 'Valmis',
+                import: '📋 Impordi Sudoku',
+                importPlaceholder: 'Kleebi Sudoku (81 märki, nt: 53..7....6..195...)',
+                install: 'Installi rakendus',
+                footer: 'Mängu teinud',
+                offlineLink: '📡 Offline mäng',
+                shareLink: '🔗 Jaga',
+                instructionsLink: '❓ Juhend',
+                selectCell: 'Vali kõigepealt lahter!',
+                cannotEdit: 'Seda lahtrit ei saa muuta!',
+                invalidMove: 'Vigane käik!',
+                congratulations: '🎉 Palju õnne! Lahendasid Sudoku!',
+                solved: 'Sudoku lahendatud!',
+                noSolution: 'Ei leia lahendust!',
+                correct: '✓ Õige! Sudoku on korrektselt lahendatud!',
+                notCorrect: '✗ Veel pole õige. Jätka proovimist!',
+                hintText: 'Vihje: lahter ({0}, {1}) peaks olema {2}',
+                newGameStarted: 'Uus {0} mäng!',
+                gameReset: 'Mäng lähtestatud',
+                imported: 'Sudoku imporditud!',
+                invalidFormat: 'Vigane formaat! Peab olema 81 märki.',
+                familyInfo: 'Perekond Ojaküla on armastusega loonud selle Sudoku mängu kogu perele. Mängi ja naudi!',
+                offlineInfo: 'See mäng töötab ka ilma internetita! Saad selle installida oma seadmesse ja mängida igal pool.',
+                instructions: '📖 Juhend:\n\n• Kliki tühjal lahtril\n• Sisesta number 1-9\n• Kasuta nooleklahve liikumiseks\n• Roheline nupp kontrollib lahendust\n• "Lahenda" näitab täislahendust\n• "Vihje" annab järgmise käigu\n\nHead mängimist!',
+                shareText: 'Mängi Sudokut tasuta! Perekond Ojaküla Sudoku Pro: '
+            },
+            en: {
+                title: 'Sudoku Pro',
+                subtitle: 'Solve, play, enjoy!',
+                check: '✓ Check',
+                solve: '⚡ Solve',
+                hint: '💡 Hint',
+                newGame: '🔄 New',
+                reset: '↺ Reset',
+                clear: '⌫',
+                easy: 'Easy',
+                medium: 'Medium',
+                hard: 'Hard',
+                expert: 'Expert',
+                moves: 'Moves',
+                errors: 'Errors',
+                progress: 'Complete',
+                import: '📋 Import Sudoku',
+                importPlaceholder: 'Paste Sudoku (81 characters, e.g. 53..7....6..195...)',
+                install: 'Install App',
+                footer: 'Created by',
+                offlineLink: '📡 Offline Play',
+                shareLink: '🔗 Share',
+                instructionsLink: '❓ Instructions',
+                selectCell: 'Select a cell first!',
+                cannotEdit: 'This cell cannot be changed!',
+                invalidMove: 'Invalid move!',
+                congratulations: '🎉 Congratulations! You solved the Sudoku!',
+                solved: 'Sudoku solved!',
+                noSolution: 'No solution found!',
+                correct: '✓ Correct! Sudoku is properly solved!',
+                notCorrect: '✗ Not correct yet. Keep trying!',
+                hintText: 'Hint: cell ({0}, {1}) should be {2}',
+                newGameStarted: 'New {0} game started!',
+                gameReset: 'Game reset',
+                imported: 'Sudoku imported!',
+                invalidFormat: 'Invalid format! Must be 81 characters.',
+                familyInfo: 'Perekond Ojaküla has created this Sudoku game with love for the whole family. Play and enjoy!',
+                offlineInfo: 'This game works offline! You can install it on your device and play anywhere.',
+                instructions: '📖 Instructions:\n\n• Click on an empty cell\n• Enter number 1-9\n• Use arrow keys to navigate\n• Green button checks solution\n• "Solve" shows full solution\n• "Hint" gives next move\n\nEnjoy the game!',
+                shareText: 'Play Sudoku for free! Perekond Ojaküla Sudoku Pro: '
+            },
+            ru: {
+                title: 'Судоку Про',
+                subtitle: 'Решай, играй, наслаждайся!',
+                check: '✓ Проверить',
+                solve: '⚡ Решить',
+                hint: '💡 Подсказка',
+                newGame: '🔄 Новая',
+                reset: '↺ Сброс',
+                clear: '⌫',
+                easy: 'Лёгкий',
+                medium: 'Средний',
+                hard: 'Сложный',
+                expert: 'Эксперт',
+                moves: 'Ходы',
+                errors: 'Ошибки',
+                progress: 'Готово',
+                import: '📋 Импорт Судоку',
+                importPlaceholder: 'Вставьте Судоку (81 символ, напр. 53..7....6..195...)',
+                install: 'Установить',
+                footer: 'Создано',
+                offlineLink: '📡 Офлайн игра',
+                shareLink: '🔗 Поделиться',
+                instructionsLink: '❓ Инструкция',
+                selectCell: 'Сначала выберите ячейку!',
+                cannotEdit: 'Эту ячейку нельзя изменить!',
+                invalidMove: 'Неверный ход!',
+                congratulations: '🎉 Поздравляем! Вы решили Судоку!',
+                solved: 'Судоку решено!',
+                noSolution: 'Решение не найдено!',
+                correct: '✓ Правильно! Судоку решено верно!',
+                notCorrect: '✗ Пока неверно. Продолжайте пытаться!',
+                hintText: 'Подсказка: в ячейке ({0}, {1}) должно быть {2}',
+                newGameStarted: 'Начата новая игра: {0}!',
+                gameReset: 'Игра сброшена',
+                imported: 'Судоку импортировано!',
+                invalidFormat: 'Неверный формат! Должно быть 81 символ.',
+                familyInfo: 'Семья Оякюля создала эту игру Судоку с любовью для всей семьи. Играйте и наслаждайтесь!',
+                offlineInfo: 'Эта игра работает без интернета! Вы можете установить её на устройство и играть где угодно.',
+                instructions: '📖 Инструкция:\n\n• Нажмите на пустую ячейку\n• Введите число 1-9\n• Используйте стрелки для навигации\n• Зелёная кнопка проверяет решение\n• "Решить" показывает решение\n• "Подсказка" даёт следующий ход\n\nПриятной игры!',
+                shareText: 'Играйте в Судоку бесплатно! Судоку Про от семьи Оякюля: '
+            }
+        };
+        
+        let currentLang = 'et';
+        
+        function setLanguage(lang) {
+            currentLang = lang;
+            
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            document.getElementById('gameTitle').textContent = translations[lang].title;
+            document.getElementById('gameSubtitle').textContent = translations[lang].subtitle;
+            document.getElementById('checkBtn').innerHTML = translations[lang].check;
+            document.getElementById('solveBtn').innerHTML = translations[lang].solve;
+            document.getElementById('hintBtn').innerHTML = translations[lang].hint;
+            document.getElementById('newGameBtn').innerHTML = translations[lang].newGame;
+            document.getElementById('resetBtn').innerHTML = translations[lang].reset;
+            document.getElementById('clearBtn').innerHTML = translations[lang].clear;
+            document.getElementById('diffEasy').textContent = translations[lang].easy;
+            document.getElementById('diffMedium').textContent = translations[lang].medium;
+            document.getElementById('diffHard').textContent = translations[lang].hard;
+            document.getElementById('diffExpert').textContent = translations[lang].expert;
+            document.getElementById('movesLabel').textContent = translations[lang].moves;
+            document.getElementById('errorsLabel').textContent = translations[lang].errors;
+            document.getElementById('progressLabel').textContent = translations[lang].progress;
+            document.getElementById('importBtn').innerHTML = translations[lang].import;
+            document.getElementById('puzzleInput').placeholder = translations[lang].importPlaceholder;
+            document.getElementById('installText').textContent = translations[lang].install;
+            document.getElementById('footerText').textContent = translations[lang].footer;
+            document.getElementById('offlineLink').innerHTML = translations[lang].offlineLink;
+            document.getElementById('shareLink').innerHTML = translations[lang].shareLink;
+            document.getElementById('instructionsLink').innerHTML = translations[lang].instructionsLink;
+            
+            document.documentElement.lang = lang;
+            localStorage.setItem('sudokuLanguage', lang);
+            
+            showMessage(translations[lang].subtitle, 'info');
+        }
+        
+        // ===== PWA Install =====
+        let deferredPrompt;
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installBtn').classList.add('show');
+        });
+        
+        function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted install');
+                    }
+                    deferredPrompt = null;
+                    document.getElementById('installBtn').classList.remove('show');
+                });
+            }
+        }
+        
+        // ===== Offline tugi =====
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('data:application/javascript,self.addEventListener("fetch",e=>{})');
+            });
+        }
+        
+        // ===== Mängu loogika (SudokuGame klass) =====
         class SudokuGame {
             constructor() {
                 this.grid = Array(9).fill(0).map(() => Array(9).fill(0));
@@ -337,9 +720,17 @@
             }
             
             init() {
+                this.loadLanguage();
                 this.renderGrid();
                 this.setupEventListeners();
                 this.newGame();
+            }
+            
+            loadLanguage() {
+                const saved = localStorage.getItem('sudokuLanguage');
+                if (saved) {
+                    currentLang = saved;
+                }
             }
             
             setupEventListeners() {
@@ -348,9 +739,9 @@
                         this.inputNumber(parseInt(e.key));
                     } else if (e.key === 'Delete' || e.key === 'Backspace') {
                         this.clearCell();
-                    } else if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || 
-                              e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                    } else if (e.key.startsWith('Arrow')) {
                         this.handleArrowKeys(e.key);
+                        e.preventDefault();
                     }
                 });
             }
@@ -431,14 +822,14 @@
             
             inputNumber(num) {
                 if (!this.selectedCell) {
-                    this.showMessage('Vali kõigepealt lahter!', 'info');
+                    this.showMessage(translations[currentLang].selectCell, 'info');
                     return;
                 }
                 
                 const [row, col] = this.selectedCell;
                 
                 if (this.initialGrid[row][col] !== 0) {
-                    this.showMessage('Seda lahtrit ei saa muuta!', 'error');
+                    this.showMessage(translations[currentLang].cannotEdit, 'error');
                     return;
                 }
                 
@@ -451,13 +842,13 @@
                     
                     if (this.isSolved()) {
                         this.stopTimer();
-                        this.showMessage('🎉 Palju õnne! Lahendasid Sudoku!', 'success');
+                        this.showMessage(translations[currentLang].congratulations, 'success');
                     }
                 } else {
                     this.errors++;
                     this.updateStats();
                     this.showError(row, col);
-                    this.showMessage('Vigane käik!', 'error');
+                    this.showMessage(translations[currentLang].invalidMove, 'error');
                 }
             }
             
@@ -467,7 +858,7 @@
                 const [row, col] = this.selectedCell;
                 
                 if (this.initialGrid[row][col] !== 0) {
-                    this.showMessage('Algset lahtrit ei saa tühjendada!', 'error');
+                    this.showMessage(translations[currentLang].cannotEdit, 'error');
                     return;
                 }
                 
@@ -477,17 +868,14 @@
             }
             
             isValidMove(row, col, num) {
-                // Kontrolli rida
                 for (let j = 0; j < 9; j++) {
                     if (j !== col && this.grid[row][j] === num) return false;
                 }
                 
-                // Kontrolli veerg
                 for (let i = 0; i < 9; i++) {
                     if (i !== row && this.grid[i][col] === num) return false;
                 }
                 
-                // Kontrolli 3x3 plokk
                 const startRow = Math.floor(row / 3) * 3;
                 const startCol = Math.floor(col / 3) * 3;
                 
@@ -521,7 +909,6 @@
             }
             
             checkSolution() {
-                // Kontrolli kõiki ridu
                 for (let i = 0; i < 9; i++) {
                     const row = new Set();
                     for (let j = 0; j < 9; j++) {
@@ -531,7 +918,6 @@
                     if (row.size !== 9) return false;
                 }
                 
-                // Kontrolli kõiki veerge
                 for (let j = 0; j < 9; j++) {
                     const col = new Set();
                     for (let i = 0; i < 9; i++) {
@@ -540,7 +926,6 @@
                     if (col.size !== 9) return false;
                 }
                 
-                // Kontrolli 3x3 plokke
                 for (let block = 0; block < 9; block++) {
                     const blockSet = new Set();
                     const startRow = Math.floor(block / 3) * 3;
@@ -559,10 +944,10 @@
             
             solvePuzzle() {
                 if (!this.solve(this.grid)) {
-                    this.showMessage('Ei leia lahendust!', 'error');
+                    this.showMessage(translations[currentLang].noSolution, 'error');
                 } else {
                     this.renderGrid();
-                    this.showMessage('Sudoku lahendatud!', 'success');
+                    this.showMessage(translations[currentLang].solved, 'success');
                 }
             }
             
@@ -595,17 +980,14 @@
             }
             
             isValidInBoard(board, row, col, num) {
-                // Kontrolli rida
                 for (let j = 0; j < 9; j++) {
                     if (board[row][j] === num) return false;
                 }
                 
-                // Kontrolli veerg
                 for (let i = 0; i < 9; i++) {
                     if (board[i][col] === num) return false;
                 }
                 
-                // Kontrolli 3x3 plokk
                 const startRow = Math.floor(row / 3) * 3;
                 const startCol = Math.floor(col / 3) * 3;
                 
@@ -626,19 +1008,21 @@
                     if (empty) {
                         const [row, col] = empty;
                         const hintValue = tempBoard[row][col];
-                        this.showMessage(`Vihje: lahter (${row+1}, ${col+1}) peaks olema ${hintValue}`, 'info');
+                        const msg = translations[currentLang].hintText
+                            .replace('{0}', row + 1)
+                            .replace('{1}', col + 1)
+                            .replace('{2}', hintValue);
+                        this.showMessage(msg, 'info');
                         this.selectCell(row, col);
                     }
                 }
             }
             
             generatePuzzle(difficulty) {
-                // Genereeri täislahendus
                 const fullBoard = Array(9).fill(0).map(() => Array(9).fill(0));
                 this.fillDiagonal(fullBoard);
                 this.solve(fullBoard);
                 
-                // Kopeeri ja eemalda lahtreid vastavalt raskusastmele
                 const puzzle = fullBoard.map(row => [...row]);
                 const cellsToRemove = {
                     'easy': 40,
@@ -692,7 +1076,18 @@
                 this.renderGrid();
                 this.updateStats();
                 this.startTimer();
-                this.showMessage(`Uus ${this.getDifficultyName()} mäng!`, 'success');
+                
+                const diffNames = {
+                    'easy': translations[currentLang].easy.toLowerCase(),
+                    'medium': translations[currentLang].medium.toLowerCase(),
+                    'hard': translations[currentLang].hard.toLowerCase(),
+                    'expert': translations[currentLang].expert.toLowerCase()
+                };
+                
+                this.showMessage(
+                    translations[currentLang].newGameStarted.replace('{0}', diffNames[this.difficulty]), 
+                    'success'
+                );
             }
             
             resetGame() {
@@ -702,7 +1097,7 @@
                 this.errors = 0;
                 this.renderGrid();
                 this.updateStats();
-                this.showMessage('Mäng lähtestatud', 'info');
+                this.showMessage(translations[currentLang].gameReset, 'info');
             }
             
             importPuzzle() {
@@ -710,7 +1105,7 @@
                 const cleaned = input.replace(/[.\s\n|]/g, '');
                 
                 if (cleaned.length !== 81) {
-                    this.showMessage('Vigane formaat! Peab olema 81 märki.', 'error');
+                    this.showMessage(translations[currentLang].invalidFormat, 'error');
                     return;
                 }
                 
@@ -732,7 +1127,7 @@
                 this.renderGrid();
                 this.updateStats();
                 this.startTimer();
-                this.showMessage('Sudoku imporditud!', 'success');
+                this.showMessage(translations[currentLang].imported, 'success');
             }
             
             setDifficulty(difficulty) {
@@ -742,16 +1137,6 @@
                     btn.classList.remove('active');
                 });
                 event.target.classList.add('active');
-            }
-            
-            getDifficultyName() {
-                const names = {
-                    'easy': 'lihtne',
-                    'medium': 'keskmine',
-                    'hard': 'raske',
-                    'expert': 'ekspert'
-                };
-                return names[this.difficulty] || this.difficulty;
             }
             
             updateStats() {
@@ -801,20 +1186,21 @@
             }
         }
         
-        // Globaalsed funktsioonid nuppude jaoks
+        // Globaalsed funktsioonid
         let game;
         
         window.addEventListener('DOMContentLoaded', () => {
             game = new SudokuGame();
+            document.getElementById('footerYear').textContent = new Date().getFullYear();
         });
         
         function inputNumber(num) { game.inputNumber(num); }
         function clearCell() { game.clearCell(); }
         function checkSolution() { 
             if (game.checkSolution()) {
-                game.showMessage('✓ Õige! Sudoku on korrektselt lahendatud!', 'success');
+                game.showMessage(translations[currentLang].correct, 'success');
             } else {
-                game.showMessage('✗ Veel pole õige. Jätka proovimist!', 'error');
+                game.showMessage(translations[currentLang].notCorrect, 'error');
             }
         }
         function solvePuzzle() { game.solvePuzzle(); }
@@ -823,6 +1209,31 @@
         function resetGame() { game.resetGame(); }
         function setDifficulty(diff) { game.setDifficulty(diff); }
         function importPuzzle() { game.importPuzzle(); }
+        
+        function showFamilyInfo() {
+            alert(translations[currentLang].familyInfo);
+        }
+        
+        function showOfflineInfo() {
+            alert(translations[currentLang].offlineInfo);
+        }
+        
+        function showInstructions() {
+            alert(translations[currentLang].instructions);
+        }
+        
+        function shareGame() {
+            const shareUrl = 'https://ojakula-space.github.io/sudo/';
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Sudoku Pro',
+                    text: translations[currentLang].shareText,
+                    url: shareUrl,
+                });
+            } else {
+                prompt('Kopeeri see link:', shareUrl);
+            }
+        }
     </script>
 </body>
 </html>
