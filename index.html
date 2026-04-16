@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
     
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7JLNSVHETP"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-7JLNSVHETP');
+    </script>
+    
     <!-- SEO Meta Tags -->
     <title>Sudoku Pro | Perekond Ojaküla | Tasuta Online Sudoku Mäng</title>
     <meta name="description" content="Mängi Sudokut online tasuta! Perekond Ojaküla poolt loodud professionaalne Sudoku mäng. 4 raskusastet, offline tugi, ilus disain. Lahenda ja naudi!">
@@ -405,7 +414,6 @@
         .message.error { border-left: 4px solid #f44336; }
         .message.info { border-left: 4px solid #2196f3; }
 
-        /* Offline indicator */
         .offline-indicator {
             position: fixed;
             bottom: 20px;
@@ -431,7 +439,6 @@
             .controls { gap: 5px; }
         }
 
-        /* Loading screen */
         .loading {
             position: fixed;
             top: 0;
@@ -466,12 +473,10 @@
     </style>
 </head>
 <body>
-    <!-- Loading screen -->
     <div class="loading" id="loading">
         <div class="spinner"></div>
     </div>
 
-    <!-- Offline indicator -->
     <div class="offline-indicator" id="offlineIndicator">📡 Offline režiim</div>
 
     <div class="container">
@@ -565,7 +570,6 @@
     
     <div class="message" id="message"></div>
     
-    <!-- Schema.org structured data for SEO -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -590,12 +594,20 @@
     </script>
     
     <script>
-        // ===== Service Worker registreerimine =====
+        // Google Analytics sündmuste jälgimine
+        function trackEvent(action, category, label = null) {
+            if (typeof gtag !== 'undefined') {
+                gtag('event', action, {
+                    'event_category': category,
+                    'event_label': label
+                });
+            }
+        }
+
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                // Registreeri inline service worker
                 const swCode = `
-                    const CACHE_NAME = 'sudoku-ojakyla-v2';
+                    const CACHE_NAME = 'sudoku-ojakyla-v3';
                     const urlsToCache = [
                         '/sudo/',
                         '/sudo/index.html'
@@ -643,13 +655,14 @@
                 navigator.serviceWorker.register(swUrl)
                     .then(registration => {
                         console.log('✅ Service Worker registreeritud');
+                        trackEvent('service_worker', 'pwa', 'registered');
                         
-                        // Kontrolli uuendusi
                         registration.addEventListener('updatefound', () => {
                             const newWorker = registration.installing;
                             newWorker.addEventListener('statechange', () => {
                                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
                                     document.getElementById('updateBtn').classList.add('show');
+                                    trackEvent('update_available', 'pwa');
                                 }
                             });
                         });
@@ -658,28 +671,29 @@
             });
         }
 
-        // ===== Offline/Online tuvastamine =====
         window.addEventListener('online', () => {
             document.getElementById('offlineIndicator').classList.remove('show');
             showMessage('🟢 Online - kõik funktsioonid töötavad', 'success');
+            trackEvent('online', 'connection');
         });
 
         window.addEventListener('offline', () => {
             document.getElementById('offlineIndicator').classList.add('show');
             showMessage('🔴 Offline režiim - mäng töötab edasi!', 'info');
+            trackEvent('offline', 'connection');
         });
 
         if (!navigator.onLine) {
             document.getElementById('offlineIndicator').classList.add('show');
         }
 
-        // ===== PWA Install =====
         let deferredPrompt;
         
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
             document.getElementById('installBtn').classList.add('show');
+            trackEvent('install_prompt', 'pwa', 'shown');
         });
 
         function installApp() {
@@ -688,6 +702,9 @@
                 deferredPrompt.userChoice.then((choiceResult) => {
                     if (choiceResult.outcome === 'accepted') {
                         showMessage('✅ Rakendus installeeritud!', 'success');
+                        trackEvent('install', 'pwa', 'accepted');
+                    } else {
+                        trackEvent('install', 'pwa', 'dismissed');
                     }
                     deferredPrompt = null;
                     document.getElementById('installBtn').classList.remove('show');
@@ -701,16 +718,15 @@
                     registration.waiting.postMessage('skipWaiting');
                 });
             }
+            trackEvent('update', 'pwa', 'accepted');
             document.getElementById('updateBtn').classList.remove('show');
             setTimeout(() => location.reload(), 500);
         }
 
-        // Peida laadimisscreen
         setTimeout(() => {
             document.getElementById('loading').classList.add('hide');
         }, 500);
 
-        // ===== Mitmekeelne tugi =====
         const translations = {
             et: {
                 title: 'Sudoku Pro',
@@ -750,8 +766,8 @@
                 imported: 'Sudoku imporditud!',
                 invalidFormat: 'Vigane formaat! Peab olema 81 märki.',
                 familyInfo: '❤️ Perekond Ojaküla on armastusega loonud selle Sudoku mängu kogu perele. Mängi ja naudi! ❤️',
-                offlineInfo: '📡 See mäng töötab täielikult offline!\n\n• Installi avakuvale\n• Mängi lennukirežiimis\n• Kõik funktsioonid töötavad\n• Salvestab automaatselt\n\nPerekond Ojaküla ❤️',
-                instructions: '📖 Juhend:\n\n• Kliki tühjal lahtril\n• Sisesta number 1-9\n• Kasuta nooleklahve liikumiseks\n• Roheline nupp kontrollib lahendust\n• "Lahenda" näitab täislahendust\n• "Vihje" annab järgmise käigu\n• Mäng salvestub automaatselt\n\nHead mängimist! Perekond Ojaküla',
+                offlineInfo: '📡 See mäng töötab täielikult offline!\\n\\n• Installi avakuvale\\n• Mängi lennukirežiimis\\n• Kõik funktsioonid töötavad\\n• Salvestab automaatselt\\n\\nPerekond Ojaküla ❤️',
+                instructions: '📖 Juhend:\\n\\n• Kliki tühjal lahtril\\n• Sisesta number 1-9\\n• Kasuta nooleklahve liikumiseks\\n• Roheline nupp kontrollib lahendust\\n• "Lahenda" näitab täislahendust\\n• "Vihje" annab järgmise käigu\\n• Mäng salvestub automaatselt\\n\\nHead mängimist! Perekond Ojaküla',
                 shareText: 'Mängi Sudokut tasuta! Perekond Ojaküla Sudoku Pro: '
             },
             en: {
@@ -792,8 +808,8 @@
                 imported: 'Sudoku imported!',
                 invalidFormat: 'Invalid format! Must be 81 characters.',
                 familyInfo: '❤️ Perekond Ojaküla has created this Sudoku game with love for the whole family. Play and enjoy! ❤️',
-                offlineInfo: '📡 This game works fully offline!\n\n• Install to home screen\n• Play in airplane mode\n• All features work\n• Auto-saves progress\n\nPerekond Ojaküla ❤️',
-                instructions: '📖 Instructions:\n\n• Click on an empty cell\n• Enter number 1-9\n• Use arrow keys to navigate\n• Green button checks solution\n• "Solve" shows full solution\n• "Hint" gives next move\n• Game auto-saves\n\nEnjoy! Perekond Ojaküla',
+                offlineInfo: '📡 This game works fully offline!\\n\\n• Install to home screen\\n• Play in airplane mode\\n• All features work\\n• Auto-saves progress\\n\\nPerekond Ojaküla ❤️',
+                instructions: '📖 Instructions:\\n\\n• Click on an empty cell\\n• Enter number 1-9\\n• Use arrow keys to navigate\\n• Green button checks solution\\n• "Solve" shows full solution\\n• "Hint" gives next move\\n• Game auto-saves\\n\\nEnjoy! Perekond Ojaküla',
                 shareText: 'Play Sudoku for free! Perekond Ojaküla Sudoku Pro: '
             },
             ru: {
@@ -834,8 +850,8 @@
                 imported: 'Судоку импортировано!',
                 invalidFormat: 'Неверный формат! Должно быть 81 символ.',
                 familyInfo: '❤️ Семья Оякюля создала эту игру Судоку с любовью для всей семьи. Играйте и наслаждайтесь! ❤️',
-                offlineInfo: '📡 Эта игра полностью работает офлайн!\n\n• Установите на главный экран\n• Играйте в авиарежиме\n• Все функции работают\n• Автосохранение\n\nСемья Оякюля ❤️',
-                instructions: '📖 Инструкция:\n\n• Нажмите на пустую ячейку\n• Введите число 1-9\n• Используйте стрелки для навигации\n• Зелёная кнопка проверяет решение\n• "Решить" показывает решение\n• "Подсказка" даёт следующий ход\n• Игра автосохраняется\n\nПриятной игры! Семья Оякюля',
+                offlineInfo: '📡 Эта игра полностью работает офлайн!\\n\\n• Установите на главный экран\\n• Играйте в авиарежиме\\n• Все функции работают\\n• Автосохранение\\n\\nСемья Оякюля ❤️',
+                instructions: '📖 Инструкция:\\n\\n• Нажмите на пустую ячейку\\n• Введите число 1-9\\n• Используйте стрелки для навигации\\n• Зелёная кнопка проверяет решение\\n• "Решить" показывает решение\\n• "Подсказка" даёт следующий ход\\n• Игра автосохраняется\\n\\nПриятной игры! Семья Оякюля',
                 shareText: 'Играйте в Судоку бесплатно! Судоку Про от семьи Оякюля: '
             }
         };
@@ -877,10 +893,10 @@
             document.documentElement.lang = lang;
             localStorage.setItem('sudokuLanguage', lang);
             
+            trackEvent('language_change', 'settings', lang);
             showMessage(translations[lang].subtitle, 'info');
         }
         
-        // ===== Mängu loogika (SudokuGame klass) =====
         class SudokuGame {
             constructor() {
                 this.loadSavedGame();
@@ -904,11 +920,12 @@
                 this.updateStats();
                 this.startTimer();
                 
-                // Laadi keel
                 const savedLang = localStorage.getItem('sudokuLanguage');
                 if (savedLang && savedLang !== currentLang) {
                     currentLang = savedLang;
                 }
+                
+                trackEvent('game_loaded', 'system');
             }
             
             loadSavedGame() {
@@ -922,6 +939,7 @@
                         this.moves = state.moves;
                         this.errors = state.errors;
                         this.timerSeconds = state.timerSeconds;
+                        trackEvent('saved_game_loaded', 'game', this.difficulty);
                         return true;
                     }
                 } catch (e) {
@@ -1053,10 +1071,12 @@
                     this.saveGame();
                     this.renderGrid();
                     this.selectCell(row, col);
+                    trackEvent('move', 'game', 'valid');
                     
                     if (this.isSolved()) {
                         this.stopTimer();
                         this.showMessage(translations[currentLang].congratulations, 'success');
+                        trackEvent('game_completed', 'game', this.difficulty);
                         localStorage.removeItem('sudokuGameState');
                     }
                 } else {
@@ -1065,6 +1085,7 @@
                     this.saveGame();
                     this.showError(row, col);
                     this.showMessage(translations[currentLang].invalidMove, 'error');
+                    trackEvent('move', 'game', 'invalid');
                 }
             }
             
@@ -1162,9 +1183,11 @@
             solvePuzzle() {
                 if (!this.solve(this.grid)) {
                     this.showMessage(translations[currentLang].noSolution, 'error');
+                    trackEvent('solve', 'game', 'failed');
                 } else {
                     this.renderGrid();
                     this.showMessage(translations[currentLang].solved, 'success');
+                    trackEvent('solve', 'game', 'success');
                 }
             }
             
@@ -1231,6 +1254,7 @@
                             .replace('{2}', hintValue);
                         this.showMessage(msg, 'info');
                         this.selectCell(row, col);
+                        trackEvent('hint', 'game', 'used');
                     }
                 }
             }
@@ -1307,6 +1331,7 @@
                     translations[currentLang].newGameStarted.replace('{0}', diffNames[this.difficulty]), 
                     'success'
                 );
+                trackEvent('new_game', 'game', this.difficulty);
             }
             
             resetGame() {
@@ -1318,6 +1343,7 @@
                 this.updateStats();
                 this.saveGame();
                 this.showMessage(translations[currentLang].gameReset, 'info');
+                trackEvent('reset', 'game');
             }
             
             importPuzzle() {
@@ -1350,6 +1376,7 @@
                 this.startTimer();
                 this.saveGame();
                 this.showMessage(translations[currentLang].imported, 'success');
+                trackEvent('import', 'game');
             }
             
             setDifficulty(difficulty) {
@@ -1359,6 +1386,7 @@
                     btn.classList.remove('active');
                 });
                 event.target.classList.add('active');
+                trackEvent('difficulty_change', 'settings', difficulty);
             }
             
             updateStats() {
@@ -1408,18 +1436,18 @@
             }
         }
         
-        // Globaalsed funktsioonid
         let game;
         
         window.addEventListener('DOMContentLoaded', () => {
             game = new SudokuGame();
             document.getElementById('footerYear').textContent = new Date().getFullYear();
             
-            // Kontrolli URL parameetreid
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('action') === 'new') {
                 game.newGame();
             }
+            
+            trackEvent('page_view', 'system');
         });
         
         function inputNumber(num) { game.inputNumber(num); }
@@ -1427,8 +1455,10 @@
         function checkSolution() { 
             if (game.checkSolution()) {
                 game.showMessage(translations[currentLang].correct, 'success');
+                trackEvent('check', 'game', 'correct');
             } else {
                 game.showMessage(translations[currentLang].notCorrect, 'error');
+                trackEvent('check', 'game', 'incorrect');
             }
         }
         function solvePuzzle() { game.solvePuzzle(); }
@@ -1444,14 +1474,17 @@
         
         function showFamilyInfo() {
             alert(translations[currentLang].familyInfo);
+            trackEvent('family_info', 'ui');
         }
         
         function showOfflineInfo() {
             alert(translations[currentLang].offlineInfo);
+            trackEvent('offline_info', 'ui');
         }
         
         function showInstructions() {
             alert(translations[currentLang].instructions);
+            trackEvent('instructions', 'ui');
         }
         
         function shareGame() {
@@ -1462,12 +1495,13 @@
                     text: translations[currentLang].shareText,
                     url: shareUrl,
                 });
+                trackEvent('share', 'social', 'native');
             } else {
                 prompt('Kopeeri see link:', shareUrl);
+                trackEvent('share', 'social', 'copy');
             }
         }
         
-        // Globaalne teavituste funktsioon
         function showMessage(text, type) {
             const messageEl = document.getElementById('message');
             messageEl.textContent = text;
